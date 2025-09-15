@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2025. Volodymyr Hryvinskyi. All rights reserved.
+  ~ Author: Volodymyr Hryvinskyi <volodymyr@hryvinskyi.com>
+  ~ GitHub: https://github.com/hryvinskyi
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="hryvinskyi_page_layout" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Hryvinskyi Page Layout Manager</label>
+            <tab>advanced</tab>
+            <resource>Hryvinskyi_PageLayoutManager::config</resource>
+
+            <group id="entity_specific" translate="label" type="text" sortOrder="10" showInDefault="0" showInWebsite="0" showInStore="0">
+                <label>Entity Specific Layout Handle Management</label>
+                <comment><![CDATA[Control entity-specific layout handles to prevent cache bloat in multi-store environments.]]></comment>
+
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Allow Entity-Specific Layout Handles (when disabled, blocks all entity-specific layouts like *_id_*.xml)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>hryvinskyi_page_layout/entity_specific/enabled</config_path>
+                </field>
+
+                <field id="enabled_only_specific" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Use Only Specific Validators: When enabled, the entity-specific layout will be added only for validated requests</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>hryvinskyi_page_layout/entity_specific/enabled_only_specific</config_path>
+                    <depends>
+                        <field id="enabled">0</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

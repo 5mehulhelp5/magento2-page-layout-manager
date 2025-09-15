@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2025. Volodymyr Hryvinskyi. All rights reserved.
+  ~ Author: Volodymyr Hryvinskyi <volodymyr@hryvinskyi.com>
+  ~ GitHub: https://github.com/hryvinskyi
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Interface preferences -->
+    <preference for="Hryvinskyi\PageLayoutManager\Api\LayoutHandleConfigInterface"
+                type="Hryvinskyi\PageLayoutManager\Model\Config\LayoutHandleConfig"/>
+
+    <preference for="Hryvinskyi\PageLayoutManager\Api\LayoutHandleStrategyInterface"
+                type="Hryvinskyi\PageLayoutManager\Model\Strategy\ValidatorStrategy"/>
+
+    <!-- Plugin configuration -->
+    <type name="Magento\Framework\View\Result\Page">
+        <plugin name="hryvinskyi_layout_handle_manager"
+                type="Hryvinskyi\PageLayoutManager\Plugin\Framework\View\Result\Page\LayoutHandleManager"
+                sortOrder="10"/>
+    </type>
+
+    <!-- Configuration for request validators - other modules can add their own -->
+    <type name="Hryvinskyi\PageLayoutManager\Model\Strategy\ValidatorStrategy">
+        <arguments>
+            <argument name="requestValidators" xsi:type="array">
+                <!-- Example: Add your custom validators here -->
+                <!-- <item name="my_custom_validator" xsi:type="object">MyModule\Model\MyCustomValidator</item> -->
+            </argument>
+        </arguments>
+    </type>
+
+</config>
