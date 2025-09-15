@@ -37,6 +37,7 @@ class LayoutHandleManager
      * @param string|null $defaultHandle
      * @param bool $entitySpecific
      * @return bool
+     * @noinspection PhpUnusedParameterInspection
      */
     public function aroundAddPageLayoutHandles(
         Page $subject,
@@ -46,18 +47,23 @@ class LayoutHandleManager
         bool $entitySpecific = true
     ): bool {
         try {
-            $shouldAllow = $this->layoutStrategy->shouldAllowEntityLayout(
+            $decision = $this->layoutStrategy->shouldAllowEntityLayout(
                 $parameters,
                 $defaultHandle,
                 $entitySpecific
             );
 
-            if (!$shouldAllow && $entitySpecific) {
+            if (!$decision->isAllowed() && $entitySpecific) {
                 // Block entity-specific handles to prevent cache bloat
                 return true;
             }
 
-            return $proceed($parameters, $defaultHandle, $entitySpecific);
+            // Use potentially modified parameters from the decision
+            return $proceed(
+                $decision->getParameters(),
+                $decision->getDefaultHandle(),
+                $entitySpecific
+            );
         } catch (\Exception $e) {
             $this->logger->error('Error in LayoutHandleManager: ' . $e->getMessage(), [
                 'parameters' => $parameters,

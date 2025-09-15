@@ -10,6 +10,8 @@
     <!-- Interface preferences -->
     <preference for="Hryvinskyi\PageLayoutManager\Api\LayoutHandleConfigInterface"
                 type="Hryvinskyi\PageLayoutManager\Model\Config\LayoutHandleConfig"/>
+    <preference for="Hryvinskyi\PageLayoutManager\Api\ModificationResultInterface"
+                type="Hryvinskyi\PageLayoutManager\Model\ModificationResult"/>
 
     <preference for="Hryvinskyi\PageLayoutManager\Api\LayoutHandleStrategyInterface"
                 type="Hryvinskyi\PageLayoutManager\Model\Strategy\ValidatorStrategy"/>

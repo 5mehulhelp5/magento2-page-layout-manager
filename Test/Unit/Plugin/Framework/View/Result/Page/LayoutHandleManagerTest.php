@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Hryvinskyi\PageLayoutManager\Test\Unit\Plugin\Framework\View\Result\Page;
 
+use Hryvinskyi\PageLayoutManager\Api\LayoutDecisionInterface;
 use Hryvinskyi\PageLayoutManager\Api\LayoutHandleStrategyInterface;
 use Hryvinskyi\PageLayoutManager\Plugin\Framework\View\Result\Page\LayoutHandleManager;
 use Magento\Framework\View\Result\Page;
@@ -45,10 +46,21 @@ class LayoutHandleManagerTest extends TestCase
         $entitySpecific = true;
         $expectedResult = true;
 
+        $decisionMock = $this->createMock(LayoutDecisionInterface::class);
+        $decisionMock->expects($this->once())
+            ->method('isAllowed')
+            ->willReturn(true);
+        $decisionMock->expects($this->once())
+            ->method('getParameters')
+            ->willReturn($parameters);
+        $decisionMock->expects($this->once())
+            ->method('getDefaultHandle')
+            ->willReturn($defaultHandle);
+
         $this->layoutStrategyMock->expects($this->once())
             ->method('shouldAllowEntityLayout')
             ->with($parameters, $defaultHandle, $entitySpecific)
-            ->willReturn(true);
+            ->willReturn($decisionMock);
 
         $proceed = function ($params, $handle, $specific) use ($parameters, $defaultHandle, $entitySpecific, $expectedResult) {
             $this->assertSame($parameters, $params);
@@ -74,10 +86,15 @@ class LayoutHandleManagerTest extends TestCase
         $defaultHandle = 'test_handle';
         $entitySpecific = true;
 
+        $decisionMock = $this->createMock(LayoutDecisionInterface::class);
+        $decisionMock->expects($this->once())
+            ->method('isAllowed')
+            ->willReturn(false);
+
         $this->layoutStrategyMock->expects($this->once())
             ->method('shouldAllowEntityLayout')
             ->with($parameters, $defaultHandle, $entitySpecific)
-            ->willReturn(false);
+            ->willReturn($decisionMock);
 
         $proceed = function () {
             $this->fail('Proceed should not be called when entity-specific is blocked');
@@ -102,10 +119,21 @@ class LayoutHandleManagerTest extends TestCase
         $entitySpecific = false;
         $expectedResult = false;
 
+        $decisionMock = $this->createMock(LayoutDecisionInterface::class);
+        $decisionMock->expects($this->once())
+            ->method('isAllowed')
+            ->willReturn(false);
+        $decisionMock->expects($this->once())
+            ->method('getParameters')
+            ->willReturn($parameters);
+        $decisionMock->expects($this->once())
+            ->method('getDefaultHandle')
+            ->willReturn($defaultHandle);
+
         $this->layoutStrategyMock->expects($this->once())
             ->method('shouldAllowEntityLayout')
             ->with($parameters, $defaultHandle, $entitySpecific)
-            ->willReturn(false);
+            ->willReturn($decisionMock);
 
         $proceed = function ($params, $handle, $specific) use ($parameters, $defaultHandle, $entitySpecific, $expectedResult) {
             $this->assertSame($parameters, $params);

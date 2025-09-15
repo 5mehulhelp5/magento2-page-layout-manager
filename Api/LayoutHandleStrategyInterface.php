@@ -20,11 +20,11 @@ interface LayoutHandleStrategyInterface
      * @param array<string, mixed> $parameters
      * @param string|null $defaultHandle
      * @param bool $entitySpecific
-     * @return bool
+     * @return LayoutDecisionInterface
      */
     public function shouldAllowEntityLayout(
         array $parameters = [],
         ?string $defaultHandle = null,
         bool $entitySpecific = true
-    ): bool;
+    ): LayoutDecisionInterface;
 }

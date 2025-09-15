@@ -37,8 +37,7 @@ class LayoutHandleConfigTest extends TestCase
         $this->scopeConfigMock->expects($this->once())
             ->method('isSetFlag')
             ->with(
-                'hryvinskyi_page_layout/entity_specific/enabled',
-                ScopeInterface::SCOPE_STORE
+                'hryvinskyi_page_layout/entity_specific/enabled'
             )
             ->willReturn($expected);
 
@@ -55,8 +54,7 @@ class LayoutHandleConfigTest extends TestCase
         $this->scopeConfigMock->expects($this->once())
             ->method('isSetFlag')
             ->with(
-                'hryvinskyi_page_layout/entity_specific/enabled_only_specific',
-                ScopeInterface::SCOPE_STORE
+                'hryvinskyi_page_layout/entity_specific/enabled_only_specific'
             )
             ->willReturn($expected);
 

@@ -41,11 +41,11 @@ bin/magento cache:clean
 
 ### Creating Custom Validators
 
-#### 1. Implement the Interface
+#### 1. Implement the Validator Interface
 
 ```php
 <?php
-namespace MyModule\Model;
+namespace MyModule\Model\Validator;
 
 use Hryvinskyi\PageLayoutManager\Api\RequestValidatorInterface;
 
@@ -56,13 +56,13 @@ class MyCustomValidator implements RequestValidatorInterface
         ?string $defaultHandle = null,
         array $context = []
     ): bool {
-        // Your custom logic here
+        // Your validation logic here
         // Return true to allow entity-specific caching
         // Return false to block it
 
         // Example: Allow only specific product pages
         if ($defaultHandle === 'catalog_product_view') {
-            $productId = $context['product_id'] ?? null;
+            $productId = $parameters['id'] ?? null;
             return in_array($productId, [1, 2, 3]); // Only these products
         }
 
@@ -71,14 +71,54 @@ class MyCustomValidator implements RequestValidatorInterface
 }
 ```
 
-#### 2. Register in DI Configuration
+#### 2. Create Parameter Modifier (Optional)
+
+```php
+<?php
+namespace MyModule\Model\Modifier;
+
+use Hryvinskyi\PageLayoutManager\Api\ModificationResultInterface;
+use Hryvinskyi\PageLayoutManager\Api\ParameterModifierInterface;
+use Hryvinskyi\PageLayoutManager\Model\ModificationResult;
+
+class MyCustomParameterModifier implements ParameterModifierInterface
+{
+    public function modifyParameters(
+        array $parameters,
+        ?string $defaultHandle,
+        array $context = []
+    ): ModificationResultInterface {
+        // Modify parameters when validator allows request
+        $modifiedParameters = $parameters;
+        $modifiedHandle = $defaultHandle;
+
+        // Example: Add cache tags for better cache management
+        if ($defaultHandle === 'catalog_product_view') {
+            $modifiedParameters['cache_tags'] = ['product_cache_tag'];
+            $modifiedHandle = 'catalog_product_view_optimized';
+        }
+
+        return new ModificationResult(
+            $modifiedParameters,
+            $modifiedHandle,
+            $parameters, // original for comparison
+            $defaultHandle // original for comparison
+        );
+    }
+}
+```
+
+#### 3. Register in DI Configuration
 
 ```xml
 <!-- etc/di.xml -->
-<type name="Hryvinskyi\PageLayoutManager\Model\Strategy\AllowListStrategy">
+<type name="Hryvinskyi\PageLayoutManager\Model\Strategy\ValidatorStrategy">
     <arguments>
         <argument name="requestValidators" xsi:type="array">
-            <item name="my_custom_validator" xsi:type="object">MyModule\Model\MyCustomValidator</item>
+            <item name="my_custom_validator" xsi:type="object">MyModule\Model\Validator\MyCustomValidator</item>
+        </argument>
+        <argument name="parameterModifiers" xsi:type="array">
+            <item name="my_custom_validator" xsi:type="object">MyModule\Model\Modifier\MyCustomParameterModifier</item>
         </argument>
     </arguments>
 </type>
