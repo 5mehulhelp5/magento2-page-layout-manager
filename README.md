@@ -51,6 +51,10 @@ use Hryvinskyi\PageLayoutManager\Api\RequestValidatorInterface;
 
 class MyCustomValidator implements RequestValidatorInterface
 {
+    public function __construct(private readonly RequestInterface $request)
+    {
+    }
+
     public function isRequestAllowed(
         array $parameters = [],
         ?string $defaultHandle = null,
@@ -61,7 +65,7 @@ class MyCustomValidator implements RequestValidatorInterface
         // Return false to block it
 
         // Example: Allow only specific product pages
-        if ($defaultHandle === 'catalog_product_view') {
+        if ($this->request->getFullActionName() === 'catalog_product_view') {
             $productId = $parameters['id'] ?? null;
             return in_array($productId, [1, 2, 3]); // Only these products
         }
@@ -83,6 +87,10 @@ use Hryvinskyi\PageLayoutManager\Model\ModificationResult;
 
 class MyCustomParameterModifier implements ParameterModifierInterface
 {
+    public function __construct(private readonly RequestInterface $request)
+    {
+    }
+
     public function modifyParameters(
         array $parameters,
         ?string $defaultHandle,
@@ -93,9 +101,8 @@ class MyCustomParameterModifier implements ParameterModifierInterface
         $modifiedHandle = $defaultHandle;
 
         // Example: Add cache tags for better cache management
-        if ($defaultHandle === 'catalog_product_view') {
-            $modifiedParameters['cache_tags'] = ['product_cache_tag'];
-            $modifiedHandle = 'catalog_product_view_optimized';
+        if ($this->request->getFullActionName() === 'catalog_product_view') {
+            unset($modifiedParameters['sku']);
         }
 
         return new ModificationResult(
